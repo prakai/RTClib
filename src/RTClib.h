@@ -492,8 +492,8 @@ public:
   void clearTimestamp(void);
   //Pcf85363ASqwPinMode readSqwPinMode();
   //void writeSqwPinMode(Pcf85363ASqwPinMode mode);
-  bool setAlarm1(const DateTime &dt, Pcf85363aAlarm1Mode alarm_mode);
-  bool setAlarm2(const DateTime &dt, Pcf85363aAlarm2Mode alarm_mode);
+  bool setAlarm1(const DateTime &dt, uint8_t alarm_map);
+  bool setAlarm2(const DateTime &dt, uint8_t alarm_map);
   DateTime getAlarm1();
   DateTime getAlarm2();
   uint8_t getAlarm1Enables();

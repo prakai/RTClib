@@ -13,53 +13,53 @@
 /*
  * Date/Time registers
  */
-#define PCF85363A_DT_100THS	0x00
-#define PCF85363A_DT_SECS		0x01
-#define PCF85363A_DT_MINUTES	0x02
-#define PCF85363A_DT_HOURS	0x03
-#define PCF85363A_DT_DAYS		0x04
-#define PCF85363A_DT_WEEKDAYS	0x05
-#define PCF85363A_DT_MONTHS	0x06
-#define PCF85363A_DT_YEARS	0x07
+#define PCF85363A_DT_100THS 0x00
+#define PCF85363A_DT_SECS 0x01
+#define PCF85363A_DT_MINUTES 0x02
+#define PCF85363A_DT_HOURS 0x03
+#define PCF85363A_DT_DAYS 0x04
+#define PCF85363A_DT_WEEKDAYS 0x05
+#define PCF85363A_DT_MONTHS 0x06
+#define PCF85363A_DT_YEARS 0x07
 /*
  * Alarm registers
  */
-#define PCF85363A_DT_SECOND_ALM1	0x08
-#define PCF85363A_DT_MINUTE_ALM1	0x09
-#define PCF85363A_DT_HOUR_ALM1	0x0A
-#define PCF85363A_DT_DAY_ALM1	0x0B
-#define PCF85363A_DT_MONTH_ALM1	0x0C
-#define PCF85363A_DT_MINUTE_ALM2	0x0D
-#define PCF85363A_DT_HOUR_ALM2	0x0E
-#define PCF85363A_DT_WEEKDAY_ALM2	0x0F
-#define PCF85363A_DT_ALARM_EN	0x10
+#define PCF85363A_DT_SECOND_ALM1 0x08
+#define PCF85363A_DT_MINUTE_ALM1 0x09
+#define PCF85363A_DT_HOUR_ALM1 0x0A
+#define PCF85363A_DT_DAY_ALM1 0x0B
+#define PCF85363A_DT_MONTH_ALM1 0x0C
+#define PCF85363A_DT_MINUTE_ALM2 0x0D
+#define PCF85363A_DT_HOUR_ALM2 0x0E
+#define PCF85363A_DT_WEEKDAY_ALM2 0x0F
+#define PCF85363A_DT_ALARM_EN 0x10
 /*
  * Time stamp registers
  */
-#define PCF85363A_DT_TIMESTAMP1	0x11
-#define PCF85363A_DT_TIMESTAMP2	0x17
-#define PCF85363A_DT_TIMESTAMP3	0x1D
-#define PCF85363A_DT_TS_MODE	0x23
+#define PCF85363A_DT_TIMESTAMP1 0x11
+#define PCF85363A_DT_TIMESTAMP2 0x17
+#define PCF85363A_DT_TIMESTAMP3 0x1D
+#define PCF85363A_DT_TS_MODE 0x23
 /*
  * control registers
  */
-#define PCF85363A_CTRL_OFFSET	0x24
-#define PCF85363A_CTRL_OSCILLATOR	0x25
-#define PCF85363A_CTRL_BATTERY	0x26
-#define PCF85363A_CTRL_PIN_IO	0x27
-#define PCF85363A_CTRL_FUNCTION	0x28
-#define PCF85363A_CTRL_INTA_EN	0x29
-#define PCF85363A_CTRL_INTB_EN	0x2A
-#define PCF85363A_CTRL_FLAGS	0x2B
-#define PCF85363A_CTRL_RAMBYTE	0x2C
-#define PCF85363A_CTRL_WDOG	0x2D
-#define PCF85363A_CTRL_STOP_EN	0x2E
-#define PCF85363A_CTRL_RESETS	0x2F
-#define PCF85363A_CTRL_RAM	0x40
+#define PCF85363A_CTRL_OFFSET 0x24
+#define PCF85363A_CTRL_OSCILLATOR 0x25
+#define PCF85363A_CTRL_BATTERY 0x26
+#define PCF85363A_CTRL_PIN_IO 0x27
+#define PCF85363A_CTRL_FUNCTION 0x28
+#define PCF85363A_CTRL_INTA_EN 0x29
+#define PCF85363A_CTRL_INTB_EN 0x2A
+#define PCF85363A_CTRL_FLAGS 0x2B
+#define PCF85363A_CTRL_RAMBYTE 0x2C
+#define PCF85363A_CTRL_WDOG 0x2D
+#define PCF85363A_CTRL_STOP_EN 0x2E
+#define PCF85363A_CTRL_RESETS 0x2F
+#define PCF85363A_CTRL_RAM 0x40
 
 #define PCF85363A_STOP_EN_STOP BIT(0)
 #define PCF85363A_CLEAE_EN_STOP 0
-#define PCF85363A_RESET_SR  0x2C
+#define PCF85363A_RESET_SR 0x2C
 #define PCF85363A_RESET_CPR 0xA4
 #define PCF85363A_RESET_CTS 0x25
 
@@ -72,7 +72,8 @@
     @return True if Wire can find PCF85363A or false otherwise.
 */
 /**************************************************************************/
-bool RTC_PCF85363A::begin(TwoWire *wireInstance) {
+bool RTC_PCF85363A::begin(TwoWire *wireInstance)
+{
   if (i2c_dev)
     delete i2c_dev;
   i2c_dev = new Adafruit_I2CDevice(PCF85363A_ADDRESS, wireInstance);
@@ -83,17 +84,17 @@ bool RTC_PCF85363A::begin(TwoWire *wireInstance) {
 
 /**************************************************************************/
 /*!
-    @brief  Check the status of the VL bit in the VL_SECONDS register.
-    @details The PCF85363A has an on-chip voltage-low detector. When VDD drops
-     below Vlow, bit VL in the VL_seconds register is set to indicate that
-     the integrity of the clock information is no longer guaranteed.
-    @return True if the bit is set (VDD droped below Vlow) indicating that
-    the clock integrity is not guaranteed and false only after the bit is
-    cleared using adjust()
+    @brief  Check the saved value of INITIALIZED in the last bye of RAM.
+    @details The PCF85363A has no on-chip voltage-low detector. So, we save
+     INITIALIZED value (0xAA) in to PCF85363A at the last byte of RAM. If PCF85363A
+     lost power, the value that read from the last byte of RAM will be 0x00.
+    @return True if value from the last byte of RAM is not 0xAA,indicating that
+     the device is lost power.
 */
 /**************************************************************************/
-bool RTC_PCF85363A::lostPower(void) {
-  return (bool) (read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) != PCF85363A_MARK_AS_INITIALIZED_VALE);
+bool RTC_PCF85363A::lostPower(void)
+{
+  return (bool)(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) != PCF85363A_MARK_AS_INITIALIZED_VALE);
 }
 
 /**************************************************************************/
@@ -102,23 +103,24 @@ bool RTC_PCF85363A::lostPower(void) {
     @param dt DateTime to set
 */
 /**************************************************************************/
-void RTC_PCF85363A::adjust(const DateTime &dt) {
+void RTC_PCF85363A::adjust(const DateTime &dt)
+{
   // set STOP and then CPR
   this->stop();
   this->clearPrescaler();
-  
+
   // Setting time
   uint8_t buffer[9] = {PCF85363A_DT_100THS, // 100th register address
-                       0, // 100th seconds
+                       0,                   // 100th seconds
                        bin2bcd(dt.second()), bin2bcd(dt.minute()),
-                       bin2bcd(dt.hour()),   bin2bcd(dt.day()),
+                       bin2bcd(dt.hour()), bin2bcd(dt.day()),
                        bin2bcd(0), // skip weekdays
-                       bin2bcd(dt.month()),  bin2bcd(dt.year() - 2000U)};
+                       bin2bcd(dt.month()), bin2bcd(dt.year() - 2000U)};
   i2c_dev->write(buffer, 9);
-  
+
   // clear STOP
   this->start();
-  
+
   // Mark as initialized in RAM
   uint8_t init[2] = {PCF85363A_MARK_AS_INITIALIZED_ADDR, // Last byte of RAM address (7Fh)
                      PCF85363A_MARK_AS_INITIALIZED_VALE};
@@ -131,7 +133,8 @@ void RTC_PCF85363A::adjust(const DateTime &dt) {
     @return DateTime object containing the current date/time
 */
 /**************************************************************************/
-DateTime RTC_PCF85363A::now(void) {
+DateTime RTC_PCF85363A::now(void)
+{
   uint8_t buffer[9];
   buffer[0] = PCF85363A_DT_100THS; // start at location 2, VL_SECONDS
   i2c_dev->write_then_read(buffer, 1, buffer, 8);
@@ -146,7 +149,8 @@ DateTime RTC_PCF85363A::now(void) {
     @brief  Resets the STOP bit (00h) in register Stop_enable (2Eh)
 */
 /**************************************************************************/
-void RTC_PCF85363A::start(void) {
+void RTC_PCF85363A::start(void)
+{
   write_register(PCF85363A_CTRL_STOP_EN, PCF85363A_CLEAE_EN_STOP);
 }
 
@@ -155,7 +159,8 @@ void RTC_PCF85363A::start(void) {
     @brief  Sets the STOP bit (01h) in register Stop_enable (2Eh)
 */
 /**************************************************************************/
-void RTC_PCF85363A::stop(void) {
+void RTC_PCF85363A::stop(void)
+{
   write_register(PCF85363A_CTRL_STOP_EN, PCF85363A_STOP_EN_STOP);
 }
 
@@ -166,7 +171,8 @@ void RTC_PCF85363A::stop(void) {
     @return 1 if the RTC is running, 0 if not
 */
 /**************************************************************************/
-uint8_t RTC_PCF85363A::isRunning() {
+uint8_t RTC_PCF85363A::isRunning()
+{
   return !((read_register(PCF85363A_CTRL_STOP_EN) & 0x01) == 0x01);
 }
 
@@ -175,7 +181,8 @@ uint8_t RTC_PCF85363A::isRunning() {
     @brief  Sent SR (software reset/2Ch) to Reset address (2Fh)
 */
 /**************************************************************************/
-void RTC_PCF85363A::softwareReset(void) {
+void RTC_PCF85363A::softwareReset(void)
+{
   write_register(PCF85363A_CTRL_RESETS, PCF85363A_RESET_SR);
 }
 
@@ -184,7 +191,8 @@ void RTC_PCF85363A::softwareReset(void) {
     @brief  Sent CPR (clear prescaler/A4h) to Reset address (2Fh)
 */
 /**************************************************************************/
-void RTC_PCF85363A::clearPrescaler(void) {
+void RTC_PCF85363A::clearPrescaler(void)
+{
   write_register(PCF85363A_CTRL_RESETS, PCF85363A_RESET_CPR);
 }
 
@@ -193,7 +201,8 @@ void RTC_PCF85363A::clearPrescaler(void) {
     @brief  Sent CTS (clear timestamp/25h) to Reset address (2Fh)
 */
 /**************************************************************************/
-void RTC_PCF85363A::clearTimestamp(void) {
+void RTC_PCF85363A::clearTimestamp(void)
+{
   write_register(PCF85363A_CTRL_RESETS, PCF85363A_RESET_CTS);
 }
 
@@ -203,10 +212,10 @@ void RTC_PCF85363A::clearTimestamp(void) {
     @return CLKOUT pin mode as a #Pcf8563SqwPinMode enum
 */
 /**************************************************************************/
-//Pcf85363ASqwPinMode RTC_PCF85363A::readSqwPinMode() {
-//  int mode = read_register(PCF85363A_CLKOUTCONTROL);
-//  return static_cast<Pcf85363ASqwPinMode>(mode & PCF85363A_CLKOUT_MASK);
-//}
+// Pcf85363ASqwPinMode RTC_PCF85363A::readSqwPinMode() {
+//   int mode = read_register(PCF85363A_CLKOUTCONTROL);
+//   return static_cast<Pcf85363ASqwPinMode>(mode & PCF85363A_CLKOUT_MASK);
+// }
 
 /**************************************************************************/
 /*!
@@ -214,41 +223,39 @@ void RTC_PCF85363A::clearTimestamp(void) {
     @param mode The mode to set, see the #Pcf85363ASqwPinMode enum for options
 */
 /**************************************************************************/
-//void RTC_PCF85363A::writeSqwPinMode(Pcf85363ASqwPinMode mode) {
-//  write_register(PCF85363A_CLKOUTCONTROL, mode);
-//}
+// void RTC_PCF85363A::writeSqwPinMode(Pcf85363ASqwPinMode mode) {
+//   write_register(PCF85363A_CLKOUTCONTROL, mode);
+// }
 
 /**************************************************************************/
 /*!
     @brief  Set alarm 1 for PCF85363A
         @param 	dt DateTime object
-        @param 	alarm_mode Desired mode, see Pcf85363aAlarm1Mode enum
-    @return False if control register is not set, otherwise true
+        @param 	alarm_map Desired map, see Pcf85363aAlarm1Map enum
+    @return True only
 */
 /**************************************************************************/
-bool RTC_PCF85363A::setAlarm1(const DateTime &dt, Pcf85363aAlarm1Mode alarm_mode) {
-/*
-  uint8_t ctrl = read_register(PCF85363A_CONTROL);
-  if (!(ctrl & 0x04)) {
-    return false;
-  }
+bool RTC_PCF85363A::setAlarm1(const DateTime &dt, uint8_t alarm_map)
+{
+  /*
+    uint8_t ctrl;
 
-  uint8_t A1M1 = (alarm_mode & 0x01) << 7; // Seconds bit 7.
-  uint8_t A1M2 = (alarm_mode & 0x02) << 6; // Minutes bit 7.
-  uint8_t A1M3 = (alarm_mode & 0x04) << 5; // Hour bit 7.
-  uint8_t A1M4 = (alarm_mode & 0x08) << 4; // Day/Date bit 7.
-  uint8_t DY_DT = (alarm_mode & 0x10)
-                  << 2; // Day/Date bit 6. Date when 0, day of week when 1.
-  uint8_t day = (DY_DT) ? dowToPCF85363A(dt.dayOfTheWeek()) : dt.day();
+    uint8_t A1M1 = (alarm_mode & 0x01) << 7; // Seconds bit 7.
+    uint8_t A1M2 = (alarm_mode & 0x02) << 6; // Minutes bit 7.
+    uint8_t A1M3 = (alarm_mode & 0x04) << 5; // Hour bit 7.
+    uint8_t A1M4 = (alarm_mode & 0x08) << 4; // Day/Date bit 7.
+    uint8_t DY_DT = (alarm_mode & 0x10)
+                    << 2; // Day/Date bit 6. Date when 0, day of week when 1.
+    uint8_t day = (DY_DT) ? dowToPCF85363A(dt.dayOfTheWeek()) : dt.day();
 
-  uint8_t buffer[5] = {PCF85363A_ALARM1, uint8_t(bin2bcd(dt.second()) | A1M1),
-                       uint8_t(bin2bcd(dt.minute()) | A1M2),
-                       uint8_t(bin2bcd(dt.hour()) | A1M3),
-                       uint8_t(bin2bcd(day) | A1M4 | DY_DT)};
-  i2c_dev->write(buffer, 5);
+    uint8_t buffer[5] = {PCF85363A_ALARM1, uint8_t(bin2bcd(dt.second()) | A1M1),
+                         uint8_t(bin2bcd(dt.minute()) | A1M2),
+                         uint8_t(bin2bcd(dt.hour()) | A1M3),
+                         uint8_t(bin2bcd(day) | A1M4 | DY_DT)};
+    i2c_dev->write(buffer, 5);
 
-  write_register(PCF85363A_CONTROL, ctrl | 0x01); // AI1E
-*/
+    write_register(PCF85363A_CONTROL, ctrl | 0x01); // AI1E
+  */
   return true;
 }
 
@@ -256,31 +263,29 @@ bool RTC_PCF85363A::setAlarm1(const DateTime &dt, Pcf85363aAlarm1Mode alarm_mode
 /*!
     @brief  Set alarm 2 for PCF85363A
         @param 	dt DateTime object
-        @param 	alarm_mode Desired mode, see Pcf85363aAlarm2Mode enum
-    @return False if control register is not set, otherwise true
+        @param 	alarm_map Desired map, see Pcf85363aAlarm2Map enum
+    @return True only
 */
 /**************************************************************************/
-bool RTC_PCF85363A::setAlarm2(const DateTime &dt, Pcf85363aAlarm2Mode alarm_mode) {
-/*
-  uint8_t ctrl = read_register(PCF85363A_CONTROL);
-  if (!(ctrl & 0x04)) {
-    return false;
-  }
+bool RTC_PCF85363A::setAlarm2(const DateTime &dt, uint8_t alarm_map)
+{
+  /*
+    uint8_t ctrl;
 
-  uint8_t A2M2 = (alarm_mode & 0x01) << 7; // Minutes bit 7.
-  uint8_t A2M3 = (alarm_mode & 0x02) << 6; // Hour bit 7.
-  uint8_t A2M4 = (alarm_mode & 0x04) << 5; // Day/Date bit 7.
-  uint8_t DY_DT = (alarm_mode & 0x08)
-                  << 3; // Day/Date bit 6. Date when 0, day of week when 1.
-  uint8_t day = (DY_DT) ? dowToPCF85363A(dt.dayOfTheWeek()) : dt.day();
+    uint8_t A2M2 = (alarm_mode & 0x01) << 7; // Minutes bit 7.
+    uint8_t A2M3 = (alarm_mode & 0x02) << 6; // Hour bit 7.
+    uint8_t A2M4 = (alarm_mode & 0x04) << 5; // Day/Date bit 7.
+    uint8_t DY_DT = (alarm_mode & 0x08)
+                    << 3; // Day/Date bit 6. Date when 0, day of week when 1.
+    uint8_t day = (DY_DT) ? dowToPCF85363A(dt.dayOfTheWeek()) : dt.day();
 
-  uint8_t buffer[4] = {PCF85363A_ALARM2, uint8_t(bin2bcd(dt.minute()) | A2M2),
-                       uint8_t(bin2bcd(dt.hour()) | A2M3),
-                       uint8_t(bin2bcd(day) | A2M4 | DY_DT)};
-  i2c_dev->write(buffer, 4);
+    uint8_t buffer[4] = {PCF85363A_ALARM2, uint8_t(bin2bcd(dt.minute()) | A2M2),
+                         uint8_t(bin2bcd(dt.hour()) | A2M3),
+                         uint8_t(bin2bcd(day) | A2M4 | DY_DT)};
+    i2c_dev->write(buffer, 4);
 
-  write_register(PCF85363A_CONTROL, ctrl | 0x02); // AI2E
-*/
+    write_register(PCF85363A_CONTROL, ctrl | 0x02); // AI2E
+  */
   return true;
 }
 
@@ -291,36 +296,37 @@ bool RTC_PCF85363A::setAlarm2(const DateTime &dt, Pcf85363aAlarm2Mode alarm_mode
             day, hour, minutes, and seconds fields
 */
 /**************************************************************************/
-DateTime RTC_PCF85363A::getAlarm1() {
-/*
-  uint8_t buffer[5] = {PCF85363A_ALARM1, 0, 0, 0, 0};
-  i2c_dev->write_then_read(buffer, 1, buffer, 5);
+DateTime RTC_PCF85363A::getAlarm1()
+{
+  /*
+    uint8_t buffer[5] = {PCF85363A_ALARM1, 0, 0, 0, 0};
+    i2c_dev->write_then_read(buffer, 1, buffer, 5);
 
-  uint8_t seconds = bcd2bin(buffer[0] & 0x7F);
-  uint8_t minutes = bcd2bin(buffer[1] & 0x7F);
-  // Fetching the hour assumes 24 hour time (never 12)
-  // because this library exclusively stores the time
-  // in 24 hour format. Note that the PCF85363A supports
-  // 12 hour storage, and sets bits to indicate the type
-  // that is stored.
-  uint8_t hour = bcd2bin(buffer[2] & 0x3F);
+    uint8_t seconds = bcd2bin(buffer[0] & 0x7F);
+    uint8_t minutes = bcd2bin(buffer[1] & 0x7F);
+    // Fetching the hour assumes 24 hour time (never 12)
+    // because this library exclusively stores the time
+    // in 24 hour format. Note that the PCF85363A supports
+    // 12 hour storage, and sets bits to indicate the type
+    // that is stored.
+    uint8_t hour = bcd2bin(buffer[2] & 0x3F);
 
-  // Determine if the alarm is set to fire based on the
-  // day of the week, or an explicit date match.
-  bool isDayOfWeek = (buffer[3] & 0x40) >> 6;
-  uint8_t day;
-  if (isDayOfWeek) {
-    // Alarm set to match on day of the week
-    day = bcd2bin(buffer[3] & 0x0F);
-  } else {
-    // Alarm set to match on day of the month
-    day = bcd2bin(buffer[3] & 0x3F);
-  }
+    // Determine if the alarm is set to fire based on the
+    // day of the week, or an explicit date match.
+    bool isDayOfWeek = (buffer[3] & 0x40) >> 6;
+    uint8_t day;
+    if (isDayOfWeek) {
+      // Alarm set to match on day of the week
+      day = bcd2bin(buffer[3] & 0x0F);
+    } else {
+      // Alarm set to match on day of the month
+      day = bcd2bin(buffer[3] & 0x3F);
+    }
 
-  // On the first week of May 2000, the day-of-the-week number
-  // matches the date number.
-  return DateTime(2000, 5, day, hour, minutes, seconds);
-*/
+    // On the first week of May 2000, the day-of-the-week number
+    // matches the date number.
+    return DateTime(2000, 5, day, hour, minutes, seconds);
+  */
   return DateTime(2000, 1, 1, 0, 0, 0);
 }
 
@@ -331,35 +337,36 @@ DateTime RTC_PCF85363A::getAlarm1() {
             day, hour, and minutes fields
 */
 /**************************************************************************/
-DateTime RTC_PCF85363A::getAlarm2() {
-/*
-  uint8_t buffer[4] = {PCF85363A_ALARM2, 0, 0, 0};
-  i2c_dev->write_then_read(buffer, 1, buffer, 4);
+DateTime RTC_PCF85363A::getAlarm2()
+{
+  /*
+    uint8_t buffer[4] = {PCF85363A_ALARM2, 0, 0, 0};
+    i2c_dev->write_then_read(buffer, 1, buffer, 4);
 
-  uint8_t minutes = bcd2bin(buffer[0] & 0x7F);
-  // Fetching the hour assumes 24 hour time (never 12)
-  // because this library exclusively stores the time
-  // in 24 hour format. Note that the PCF85363A supports
-  // 12 hour storage, and sets bits to indicate the type
-  // that is stored.
-  uint8_t hour = bcd2bin(buffer[1] & 0x3F);
+    uint8_t minutes = bcd2bin(buffer[0] & 0x7F);
+    // Fetching the hour assumes 24 hour time (never 12)
+    // because this library exclusively stores the time
+    // in 24 hour format. Note that the PCF85363A supports
+    // 12 hour storage, and sets bits to indicate the type
+    // that is stored.
+    uint8_t hour = bcd2bin(buffer[1] & 0x3F);
 
-  // Determine if the alarm is set to fire based on the
-  // day of the week, or an explicit date match.
-  bool isDayOfWeek = (buffer[2] & 0x40) >> 6;
-  uint8_t day;
-  if (isDayOfWeek) {
-    // Alarm set to match on day of the week
-    day = bcd2bin(buffer[2] & 0x0F);
-  } else {
-    // Alarm set to match on day of the month
-    day = bcd2bin(buffer[2] & 0x3F);
-  }
+    // Determine if the alarm is set to fire based on the
+    // day of the week, or an explicit date match.
+    bool isDayOfWeek = (buffer[2] & 0x40) >> 6;
+    uint8_t day;
+    if (isDayOfWeek) {
+      // Alarm set to match on day of the week
+      day = bcd2bin(buffer[2] & 0x0F);
+    } else {
+      // Alarm set to match on day of the month
+      day = bcd2bin(buffer[2] & 0x3F);
+    }
 
-  // On the first week of May 2000, the day-of-the-week number
-  // matches the date number.
-  return DateTime(2000, 5, day, hour, minutes, 0);
-*/
+    // On the first week of May 2000, the day-of-the-week number
+    // matches the date number.
+    return DateTime(2000, 5, day, hour, minutes, 0);
+  */
   return DateTime(2000, 1, 1, 0, 0, 0);
 }
 
@@ -369,7 +376,8 @@ DateTime RTC_PCF85363A::getAlarm2() {
     @return Map of the current Alarm1 enables
 */
 /**************************************************************************/
-uint8_t RTC_PCF85363A::getAlarm1Enables() {
+uint8_t RTC_PCF85363A::getAlarm1Enables()
+{
   return read_register(PCF85363A_DT_ALARM_EN) & 0x1F;
 }
 
@@ -379,7 +387,8 @@ uint8_t RTC_PCF85363A::getAlarm1Enables() {
     @return Map of the current Alarm2 enables
 */
 /**************************************************************************/
-uint8_t RTC_PCF85363A::getAlarm2Enables() {
+uint8_t RTC_PCF85363A::getAlarm2Enables()
+{
   return read_register(PCF85363A_DT_ALARM_EN) & 0xE0;
 }
 
@@ -389,12 +398,13 @@ uint8_t RTC_PCF85363A::getAlarm2Enables() {
         @param 	alarm_num Alarm number to disable
 */
 /**************************************************************************/
-void RTC_PCF85363A::disableAlarm(uint8_t alarm_num) {
+void RTC_PCF85363A::disableAlarm(uint8_t alarm_num)
+{
   uint8_t ctrl = read_register(PCF85363A_DT_ALARM_EN);
   if (alarm_num == 1)
-      ctrl &= 0xE0;
+    ctrl &= 0xE0;
   else if (alarm_num == 2)
-      ctrl &= 0x1F;
+    ctrl &= 0x1F;
   write_register(PCF85363A_DT_ALARM_EN, ctrl);
 }
 
@@ -404,7 +414,8 @@ void RTC_PCF85363A::disableAlarm(uint8_t alarm_num) {
         @param 	alarm_num Alarm number to clear
 */
 /**************************************************************************/
-void RTC_PCF85363A::clearAlarm(uint8_t alarm_num) {
+void RTC_PCF85363A::clearAlarm(uint8_t alarm_num)
+{
   if (alarm_num < 1 || alarm_num > 2)
     return;
   uint8_t flags = read_register(PCF85363A_CTRL_FLAGS);
@@ -419,8 +430,9 @@ void RTC_PCF85363A::clearAlarm(uint8_t alarm_num) {
         @return True if alarm has been fired otherwise false
 */
 /**************************************************************************/
-bool RTC_PCF85363A::alarmFired(uint8_t alarm_num) {
+bool RTC_PCF85363A::alarmFired(uint8_t alarm_num)
+{
   if (alarm_num < 1 || alarm_num > 2)
-      return false;
+    return false;
   return (read_register(PCF85363A_CTRL_FLAGS) & (0x20 << (alarm_num - 1)));
 }
