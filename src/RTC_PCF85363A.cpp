@@ -1,11 +1,6 @@
 #include "RTClib.h"
 
-#define PCF85363A_ADDRESS 0x51       ///< I2C address for PCF85363A
-#define PCF85363A_CLKOUTCONTROL 0x0D ///< CLKOUT control register
-#define PCF85363A_CONTROL_1 0x00     ///< Control and status register 1
-#define PCF85363A_CONTROL_2 0x01     ///< Control and status register 2
-#define PCF85363A_VL_SECONDS 0x02    ///< register address for VL_SECONDS
-#define PCF85363A_CLKOUT_MASK 0x83   ///< bitmask for SqwPinMode on CLKOUT pin
+#define PCF85363A_ADDRESS 0x51 ///< I2C address for PCF85363A
 
 /* See https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf for a
  * description of the registers */
