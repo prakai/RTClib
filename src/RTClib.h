@@ -135,8 +135,8 @@ enum Pcf85363AClkOutFrequency {
   PCF85363A_ClkOut16kHz = 0x01,/**< 16kHz square wave */
   PCF85363A_ClkOut32kHz = 0x00 /**< 32kHz square wave */
 };
-/** PCF85363A Alarm modes for alarm 1 */
-enum Pcf85363aAlarm1Mode {
+/** PCF85363A Alarm maps for alarm 1 */
+enum Pcf85363aAlarm1Map {
   PCF85363A_A1_Second = 0x01, /**< Alarm when seconds match */
   PCF85363A_A1_Minute = 0x02, /**< Alarm when minutes and seconds match */
   PCF85363A_A1_Hour = 0x04,   /**< Alarm when hours, minutes
@@ -146,8 +146,8 @@ enum Pcf85363aAlarm1Mode {
   PCF85363A_A1_Month = 0x10   /**< Alarm when month, hours,
                                    minutes and seconds match */
 };
-/** PCF85363A Alarm modes for alarm 2 */
-enum Pcf85363aAlarm2Mode {
+/** PCF85363A Alarm maps for alarm 2 */
+enum Pcf85363aAlarm2Map {
   PCF85363A_A2_Minute = 0x20, /**< Alarm when minutes match */
   PCF85363A_A2_Hour = 0x40,   /**< Alarm when hours and minutes match */
   PCF85363A_A2_Day = 0x80     /**< Alarm when day of week, hours

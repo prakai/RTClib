@@ -12,6 +12,7 @@ RTC_DS1307	KEYWORD1
 RTC_DS3231	KEYWORD1
 RTC_PCF8523	KEYWORD1
 RTC_PCF8563	KEYWORD1
+RTC_PCF85363A   KEYWORD1
 RTC_Millis	KEYWORD1
 RTC_Micros	KEYWORD1
 Ds1307SqwPinMode	KEYWORD1
@@ -23,6 +24,9 @@ PCF8523TimerClockFreq	KEYWORD1
 PCF8523TimerIntPulse	KEYWORD1
 Pcf8523OffsetMode	KEYWORD1
 Pcf8563SqwPinMode	KEYWORD1
+Pcf85363AClkOutFrequency    KEYWORD1
+Pcf85363aAlarm1Map  KEYWORD1
+Pcf85363aAlarm2Map  KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -73,6 +77,14 @@ calibrate	KEYWORD2
 enable32K   KEYWORD2
 disable32K    KEYWORD2
 isEnabled32K    KEYWORD2
+isRunning   KEYWORD2
+softwareReset   KEYWORD2
+clearPrescaler  KEYWORD2
+clearTimestamp  KEYWORD2
+getAlarm1   KEYWORD2
+getAlarm2   KEYWORD2
+getAlarm1Enables    KEYWORD2
+getAlarm2Enables    KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
