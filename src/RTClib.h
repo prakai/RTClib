@@ -124,6 +124,35 @@ enum Pcf8563SqwPinMode {
   PCF8563_SquareWave32kHz = 0x80 /**< 32kHz square wave */
 };
 
+/** PCF85363A CLKOUT frequency settings */
+enum Pcf85363AClkOutFrequency {
+  PCF85363A_ClkOutOFF = 0x07,  /**< Off */
+  PCF85363A_ClkOut1Hz = 0x06,  /**< 1Hz square wave */
+  PCF85363A_ClkOut1kHz = 0x05, /**< 1kHz square wave */
+  PCF85363A_ClkOut2kHz = 0x04, /**< 2kHz square wave */
+  PCF85363A_ClkOut4kHz = 0x03, /**< 3kHz square wave */
+  PCF85363A_ClkOut8kHz = 0x02, /**< 8kHz square wave */
+  PCF85363A_ClkOut16kHz = 0x01,/**< 16kHz square wave */
+  PCF85363A_ClkOut32kHz = 0x00 /**< 32kHz square wave */
+};
+/** PCF85363A Alarm modes for alarm 1 */
+enum Pcf85363aAlarm1Mode {
+  PCF85363A_A1_Second = 0x01, /**< Alarm when seconds match */
+  PCF85363A_A1_Minute = 0x02, /**< Alarm when minutes and seconds match */
+  PCF85363A_A1_Hour = 0x04,   /**< Alarm when hours, minutes
+                                   and seconds match */
+  PCF85363A_A1_Day = 0x08,    /**< Alarm when day of month, hours,
+                                   minutes and seconds match */
+  PCF85363A_A1_Month = 0x10   /**< Alarm when month, hours,
+                                   minutes and seconds match */
+};
+/** PCF85363A Alarm modes for alarm 2 */
+enum Pcf85363aAlarm2Mode {
+  PCF85363A_A2_Minute = 0x20, /**< Alarm when minutes match */
+  PCF85363A_A2_Hour = 0x40,   /**< Alarm when hours and minutes match */
+  PCF85363A_A2_Day = 0x80     /**< Alarm when day of week, hours
+                                   and minutes match */
+};
 /**************************************************************************/
 /*!
     @brief  Simple general-purpose date/time class (no TZ / DST / leap
@@ -441,6 +470,37 @@ public:
   uint8_t isrunning();
   Pcf8563SqwPinMode readSqwPinMode();
   void writeSqwPinMode(Pcf8563SqwPinMode mode);
+};
+
+
+/**************************************************************************/
+/*!
+    @brief  RTC based on the PCF85363A chip connected via I2C and the Wire library
+*/
+/**************************************************************************/
+class RTC_PCF85363A : RTC_I2C {
+public:
+  bool begin(TwoWire *wireInstance = &Wire);
+  bool lostPower(void);
+  void adjust(const DateTime &dt);
+  DateTime now(void);
+  void start(void);
+  void stop(void);
+  uint8_t isRunning();
+  void softwareReset(void);
+  void clearPrescaler(void);
+  void clearTimestamp(void);
+  //Pcf85363ASqwPinMode readSqwPinMode();
+  //void writeSqwPinMode(Pcf85363ASqwPinMode mode);
+  bool setAlarm1(const DateTime &dt, Pcf85363aAlarm1Mode alarm_mode);
+  bool setAlarm2(const DateTime &dt, Pcf85363aAlarm2Mode alarm_mode);
+  DateTime getAlarm1();
+  DateTime getAlarm2();
+  uint8_t getAlarm1Enables();
+  uint8_t getAlarm2Enables();
+  void disableAlarm(uint8_t alarm_num);
+  void clearAlarm(uint8_t alarm_num);
+  bool alarmFired(uint8_t alarm_num);
 };
 
 /**************************************************************************/
