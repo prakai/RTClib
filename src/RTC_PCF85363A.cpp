@@ -89,7 +89,7 @@ bool RTC_PCF85363A::begin(TwoWire *wireInstance)
 /**************************************************************************/
 bool RTC_PCF85363A::lostPower(void)
 {
-  return (bool)!(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
+  return (bool)(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
 }
 
 /**************************************************************************/
