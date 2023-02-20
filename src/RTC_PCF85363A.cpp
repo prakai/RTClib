@@ -74,6 +74,9 @@ bool RTC_PCF85363A::begin(TwoWire *wireInstance)
   i2c_dev = new Adafruit_I2CDevice(PCF85363A_ADDRESS, wireInstance);
   if (!i2c_dev->begin())
     return false;
+  i2c_dev.beginTransmission(PCF85363A_ADDRESS);
+  if (i2c_dev.endTransmission() != 0)
+    return false;
   return true;
 }
 
@@ -89,7 +92,7 @@ bool RTC_PCF85363A::begin(TwoWire *wireInstance)
 /**************************************************************************/
 bool RTC_PCF85363A::lostPower(void)
 {
-  return (bool)(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
+  return (bool)!(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
 }
 
 /**************************************************************************/
