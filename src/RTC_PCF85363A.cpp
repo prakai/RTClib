@@ -89,7 +89,7 @@ bool RTC_PCF85363A::begin(TwoWire *wireInstance)
 /**************************************************************************/
 bool RTC_PCF85363A::lostPower(void)
 {
-  return (bool)!(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
+  return (bool)(read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) & PCF85363A_MARK_AS_INITIALIZED_VALE);
 }
 
 /**************************************************************************/
@@ -118,7 +118,7 @@ void RTC_PCF85363A::adjust(const DateTime &dt)
 
   // Mark as initialized in RAM
   uint8_t init[2] = {PCF85363A_MARK_AS_INITIALIZED_ADDR,
-                     read_register(PCF85363A_MARK_AS_INITIALIZED_ADDR) | PCF85363A_MARK_AS_INITIALIZED_VALE};
+                     read_register(PCF85363A_CTRL_STOP_EN) | PCF85363A_MARK_AS_INITIALIZED_VALE};
   i2c_dev->write(init, 2);
 }
 
