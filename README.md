@@ -9,7 +9,7 @@ Works great with Adafruit RTC breakouts:
 - [DS1307 RTC](https://www.adafruit.com/product/3296)
 
 Support more chip:
-- [PCF85363A](https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf).
+- [PCF85363A](https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf)
 
 Please note that dayOfTheWeek() ranges from 0 to 6 inclusive with 0 being 'Sunday'.
 
